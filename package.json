@@ -1,0 +1,15 @@
+{
+  "name": "scrapbookusersapp",
+  "version": "1.0.0",
+  "description": "simple user management app",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "express":"*",
+    "body-parser":"*"
+  },
+  "author": "Tina Heiligers",
+  "license": "ISC"
+}
