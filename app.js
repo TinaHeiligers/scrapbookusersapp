@@ -2,7 +2,9 @@ var express = require('express');
 var bodyParser = require('body-parser');
 var path = require('path');
 var expressValidator = require('express-validator');
-
+var mongojs = require('mongojs');
+var db = mongojs('scrapbookusersapp', ['users']);
+var ObjectId = mongojs.ObjectId;
 var app = express();
 
 //MIDDLEWARE-must come before routing
@@ -68,33 +70,40 @@ app.use(expressValidator({
 //   res.json(people);
 // });
 
-var users = [
-  {
-    id: 1,
-    first_name: 'Tina',
-    last_name: 'Heiligers',
-    email: 'tina.heiligers@gmail.com'
-  },
-  {
-    id: 2,
-    first_name: 'Marc',
-    last_name: 'Heiligers',
-    email: 'marc.heiligers@gmail.com'
-  },
-  {
-    id: 3,
-    first_name: 'Bella',
-    last_name: 'Heiligers',
-    email: 'bella.heiligers@gmail.com'
-  }
-]
+// these are static, we replace this with the stuff in mongojs
+// var users = [
+//   {
+//     id: 1,
+//     first_name: 'Tina',
+//     last_name: 'Heiligers',
+//     email: 'tina.heiligers@gmail.com'
+//   },
+//   {
+//     id: 2,
+//     first_name: 'Marc',
+//     last_name: 'Heiligers',
+//     email: 'marc.heiligers@gmail.com'
+//   },
+//   {
+//     id: 3,
+//     first_name: 'Bella',
+//     last_name: 'Heiligers',
+//     email: 'bella.heiligers@gmail.com'
+//   }
+// ]
 
 //ROUTER
 app.get('/', (req, res) => {
-  res.render('index', {
-    title: 'ScrapBook Users',
-    users: users
-  });
+//Inserting mongojs stuff from github repo:
+  // find everything
+  db.users.find(function (err, docs) {
+      // docs is an array of all the documents in users
+      // console.log(docs);
+      res.render('index', {
+        title: 'ScrapBook Users',
+        users: docs
+    });
+  })
 });
 
 app.post('/users/add', (req, res) => {
@@ -119,10 +128,29 @@ app.post('/users/add', (req, res) => {
         last_name: req.body.last_name,
         email: req.body.email
     }  
-    console.log('SUCCESS');
+
+    db.users.insert(newUser, function(err, result) {
+      if(err){
+        console.log(err);
+      } else {
+        res.redirect('/');
+      }
+    });
   }
 });
 
-app.listen(3000, () => {
+app.delete('/users/delete/:id', function(req, res){
+  
+  db.users.remove({_id: ObjectId(req.params.id)}, function(err) {
+    if(err) {
+      console.log(err);
+    }
+    res.redirect('/');
+  })
+  
+  // console.log(req.params.id);
+});
+
+app.listen(3000, function() {
   console.log('Server started on Port 3000...');
 });

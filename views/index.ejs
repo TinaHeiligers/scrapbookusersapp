@@ -18,12 +18,12 @@
     <label>Email</label><br>
     <input type="text" name="email" placeholder="Email">
     <br><br>
-    <input type="submit" vlaue="Submit">
+    <input type="submit" value="Submit">
   </form>
   <h1><%= title %></h1>
   <ul>
     <% users.forEach(user => { %>
-      <li><%= user.first_name %> <%= user.last_name %> </li>
+      <li><%= user.first_name %> <%= user.last_name %> <%= user._id %> - <a href="#" class="deleteUser" data-id="<%= user._id %>">Delete</a></li>
       <% }) %>
     %>
   </ul>
